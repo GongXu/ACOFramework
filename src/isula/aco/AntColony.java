@@ -29,7 +29,6 @@ public abstract class AntColony<C, E extends Environment> {
      */
     public AntColony(int numberOfAnts) {
         this.numberOfAnts = numberOfAnts;
-
         logger.info("Number of Ants in Colony: " + numberOfAnts);
     }
 
@@ -63,7 +62,7 @@ public abstract class AntColony<C, E extends Environment> {
         Ant<C, E> bestAnt = hive.get(0);
 
         for (Ant<C, E> ant : hive) {
-
+//        	System.out.println("ant type = " + ant.getClass().getName() + ", solution cost = " + ant.getSolutionCost(environment));
             if (ant.getSolutionCost(environment) < bestAnt
                     .getSolutionCost(environment)) {
                 bestAnt = ant;
@@ -91,7 +90,6 @@ public abstract class AntColony<C, E extends Environment> {
         for (Ant<C, E> ant : hive) {
             ant.clear();
         }
-
     }
 
     /**
@@ -143,7 +141,14 @@ public abstract class AntColony<C, E extends Environment> {
             }
         }
     }
-
+    
+    public void addAnAntPolicy(AntPolicy<C, E> antPolicy) {
+    	List<Ant<C, E>> hive = getHive();
+    	for (Ant<C, E> ant : hive) {
+    		ant.addPolicy(antPolicy);
+    	}
+    }
+    
     public int getNumberOfAnts() {
         return numberOfAnts;
     }

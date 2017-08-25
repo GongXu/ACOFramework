@@ -23,7 +23,6 @@ public abstract class OnlinePheromoneUpdate<C, E extends Environment> extends
     @Override
     public boolean applyPolicy(E environment,
                                ConfigurationProvider configurationProvider) {
-
         for (int i = 0; i < getAnt().getSolution().length; i++) {
             C solutionComponent = getAnt().getSolution()[i];
             double newPheromoneValue = this.getNewPheromoneValue(solutionComponent, i,

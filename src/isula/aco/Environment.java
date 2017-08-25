@@ -25,6 +25,7 @@ public abstract class Environment {
     // TODO(cgavidia): We're supporting pheromone deposition on vertex. On other
     // problems, the pheromone is deposited on edges.
     private double[][] pheromoneMatrix;
+    private double initialPheromone;
 
     /**
      * Creates an Environment for the Ants to traverse.
@@ -70,7 +71,14 @@ public abstract class Environment {
     public double[][] getPheromoneMatrix() {
         return pheromoneMatrix;
     }
-
+    
+    public void setInitialPheromone(double initialValue) {
+    	initialPheromone = initialValue;
+    }
+    
+    public double getInitialPheromone() {
+    	return initialPheromone;
+    }
 
     /**
      * Assigns the same value to all cells on the Pheromone Matrix.
@@ -115,5 +123,4 @@ public abstract class Environment {
             }
         }
     }
-
 }

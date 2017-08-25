@@ -39,7 +39,7 @@ public abstract class OfflinePheromoneUpdate<C, E extends Environment> extends D
             }
         }
 
-        logger.fine("Pheromone matrix after update :" + Arrays.deepToString(environment.getPheromoneMatrix()));
+        logger.fine("Pheromone matrix after update: " + Arrays.deepToString(environment.getPheromoneMatrix()));
     }
 
     /**

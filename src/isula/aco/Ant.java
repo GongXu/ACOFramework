@@ -51,6 +51,9 @@ public abstract class Ant<C, E extends Environment> {
     // data structure.
     private Map<C, Boolean> visitedComponents = new HashMap<C, Boolean>();
 
+    public List<AntPolicy<C, E>> getPolicies() {
+    	return policies;
+    }
 
     /**
      * Mark a node as visited.
@@ -112,10 +115,9 @@ public abstract class Ant<C, E extends Environment> {
      * @param expectedNumber
      * @return
      */
-    AntPolicy<C, E> getAntPolicy(AntPolicyType policyType, int expectedNumber) {
+    private AntPolicy<C, E> getAntPolicy(AntPolicyType policyType, int expectedNumber) {
         int numberOfPolicies = 0;
         AntPolicy<C, E> selectedPolicy = null;
-
         for (AntPolicy<C, E> policy : policies) {
             if (policyType.equals(policy.getPolicyType())) {
                 selectedPolicy = policy;
@@ -140,14 +142,14 @@ public abstract class Ant<C, E extends Environment> {
      */
     public void selectNextNode(E environment,
                                ConfigurationProvider configurationProvider) {
-        AntPolicy<C, E> selectNodePolicity = getAntPolicy(AntPolicyType.NODE_SELECTION, ONE_POLICY);
-
+        AntPolicy<C, E> nodeSelectPolicy = this.getAntPolicy(AntPolicyType.NODE_SELECTION, ONE_POLICY);
+        
         // TODO(cgavidia): With this approach, the policy is a shared resource
         // between ants. This doesn't allow parallelism.
-        selectNodePolicity.setAnt(this);
-        boolean policyResult = selectNodePolicity.applyPolicy(environment, configurationProvider);
+        nodeSelectPolicy.setAnt(this);
+        boolean policyResult = nodeSelectPolicy.applyPolicy(environment, configurationProvider);
         if (!policyResult) {
-            throw new ConfigurationException("The node selection policy " + selectNodePolicity.getClass().getName() +
+            throw new ConfigurationException("The node selection policy " + nodeSelectPolicy.getClass().getName() +
                     " wasn't able to select a node.");
         }
     }
@@ -160,7 +162,7 @@ public abstract class Ant<C, E extends Environment> {
      */
     public void doAfterSolutionIsReady(E environment,
                                        ConfigurationProvider configurationProvider) {
-        AntPolicy<C, E> selectNodePolicity = getAntPolicy(
+        AntPolicy<C, E> selectNodePolicity = this.getAntPolicy(
                 AntPolicyType.AFTER_SOLUTION_IS_READY, DONT_CHECK_NUMBERS);
 
         if (selectNodePolicity != null) {
@@ -290,6 +292,4 @@ public abstract class Ant<C, E extends Environment> {
     public void setVisited(Map<C, Boolean> visited) {
         this.visitedComponents = visited;
     }
-
-
 }

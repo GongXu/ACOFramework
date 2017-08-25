@@ -135,5 +135,4 @@ public abstract class UpdatePheromoneMatrixForMaxMin<C, E extends Environment>
     protected abstract double getNewPheromoneValue(Ant<C, E> ant,
                                                    int positionInSolution, C solutionComponent,
                                                    MaxMinConfigurationProvider configurationProvider);
-
 }

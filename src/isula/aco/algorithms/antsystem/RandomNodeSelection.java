@@ -26,6 +26,9 @@ public class RandomNodeSelection<C, E extends Environment> extends
         super(AntPolicyType.NODE_SELECTION);
     }
 
+    /**
+     * Roulette wheel selection of the next node
+     */
     @Override
     public boolean applyPolicy(E environment, ConfigurationProvider configurationProvider) {
         Random random = new Random();
@@ -93,8 +96,7 @@ public class RandomNodeSelection<C, E extends Environment> extends
                     .next();
             C component = componentWithProbability.getKey();
 
-            Double numerator = getHeuristicTimesPheromone(environment,
-                    configurationProvider, component);
+            Double numerator = getHeuristicTimesPheromone(environment, configurationProvider, component);
             Double probability = numerator / denominator;
             totalProbability += probability;
 

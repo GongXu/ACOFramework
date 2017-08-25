@@ -35,7 +35,6 @@ public class PseudoRandomNodeSelection<C, E extends Environment> extends
 
     private static Logger logger = Logger.getLogger(PseudoRandomNodeSelection.class.getName());
 
-
     @Override
     public boolean applyPolicy(E environment, ConfigurationProvider configuration) {
         boolean nodeWasSelected = false;
@@ -83,8 +82,7 @@ public class PseudoRandomNodeSelection<C, E extends Environment> extends
     }
 
     /**
-     * Returns the most convenient component based on heuristic and pheromone
-     * information.
+     * Returns the most convenient component based on heuristic and pheromone information.
      *
      * @param componentsWithProbabilities Possible components.
      * @return Most convenient component.
@@ -118,6 +116,4 @@ public class PseudoRandomNodeSelection<C, E extends Environment> extends
                 "This policy couldn't select a new component for the current solution. \n"
                         + "Partial solution is: " + getAnt().getSolutionAsString());
     }
-
-
 }

@@ -51,5 +51,7 @@ public interface ConfigurationProvider {
      * @return History coefficient.
      */
     double getPheromoneImportance();
+    
+    double getQ0();
 
 }

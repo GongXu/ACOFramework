@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
-
 /**
  * The main component of the framework: Is the one in charge of making a colony
  * an ants to traverse an environment in order to generate solutions.
@@ -26,14 +25,14 @@ public class AcoProblemSolver<C, E extends Environment> {
             .getName());
 
     private C[] bestSolution;
-    private double bestSolutionCost = 0.0;
+    protected double bestSolutionCost = 0.0;
     private String bestSolutionAsString = "";
 
-    private E environment;
-    private AntColony<C, E> antColony;
+    protected E environment;
+    protected AntColony<C, E> antColony;
 
     // TODO(cgavidia): Maybe we should handle a list of configuration providers.
-    private ConfigurationProvider configurationProvider;
+    protected ConfigurationProvider configurationProvider;
 
     private List<DaemonAction<C, E>> daemonActions = new ArrayList<DaemonAction<C, E>>();
 
@@ -44,8 +43,7 @@ public class AcoProblemSolver<C, E extends Environment> {
      * @param colony      The Ant Colony with specialized ants.
      * @param config      Algorithm configuration.
      */
-    public void initialize(E environment, AntColony<C, E> colony, ConfigurationProvider config) {
-        colony.buildColony(environment);
+    public void initialize(E environment, AntColony<C, E> colony, ConfigurationProvider config) {        
         this.setConfigurationProvider(config);
         this.setEnvironment(environment);
         this.setAntColony(colony);
@@ -69,7 +67,7 @@ public class AcoProblemSolver<C, E extends Environment> {
      *
      * @param daemonAction Daemon action.
      */
-    private void addDaemonAction(DaemonAction<C, E> daemonAction) {
+    public void addDaemonAction(DaemonAction<C, E> daemonAction) {
         daemonAction.setAntColony(antColony);
         daemonAction.setEnvironment(environment);
         daemonAction.setProblemSolver(this);
@@ -83,9 +81,9 @@ public class AcoProblemSolver<C, E extends Environment> {
      */
     public void solveProblem() throws ConfigurationException {
         logger.info("Starting computation at: " + new Date());
-        final long startTime = System.nanoTime();
+        final long startTime = System.currentTimeMillis();
 
-        applyDaemonActions(DaemonActionType.INITIAL_CONFIGURATION);
+//        applyDaemonActions(DaemonActionType.INITIAL_CONFIGURATION);
 
         logger.info("STARTING ITERATIONS");
         int numberOfIterations = configurationProvider.getNumberOfIterations();
@@ -100,29 +98,28 @@ public class AcoProblemSolver<C, E extends Environment> {
         int iteration = 0;
 
         while (iteration < numberOfIterations) {
-
             antColony.clearAntSolutions();
             antColony.buildSolutions(environment, configurationProvider);
-
+            updateBestSolution(environment);
+            
             // TODO(cgavidia): This should reference the Update Pheromone routine.
             // Maybe with the Policy hierarchy.
             applyDaemonActions(DaemonActionType.AFTER_ITERATION_CONSTRUCTION);
-
-            updateBestSolution(environment);
-            logger.info("Current iteration: " + iteration + " Best solution cost: " + bestSolutionCost);
+                   
+            System.out.println("Iteration " + iteration + ", best solution cost: " + bestSolutionCost);
 
             iteration++;
         }
-
+        System.out.println("ACO search finishes.");
+        	
         logger.info("Finishing computation at: " + new Date());
-        long endTime = System.nanoTime();
-        double executionTime = (endTime - startTime) / 1000000000.0;
+        long endTime = System.currentTimeMillis();
+        double executionTime = (endTime - startTime) / 1000.0;
         logger.info("Duration (in seconds): " + executionTime);
 
         logger.info("EXECUTION FINISHED");
         logger.info("Best solution cost: " + bestSolutionCost);
         logger.info("Best solution:" + bestSolutionAsString);
-
     }
 
     /**
@@ -137,6 +134,7 @@ public class AcoProblemSolver<C, E extends Environment> {
         Ant<C, E> bestAnt = antColony.getBestPerformingAnt(environment);
         Double bestIterationCost = bestAnt.getSolutionCost(environment);
         logger.fine("Iteration best cost: " + bestIterationCost);
+//        System.out.println("Iteration best cost: " + bestIterationCost);
 
         if (bestSolution == null
                 || bestSolutionCost > bestIterationCost) {
@@ -146,9 +144,8 @@ public class AcoProblemSolver<C, E extends Environment> {
 
             logger.fine("Best solution so far > Cost: " + bestSolutionCost
                     + ", Solution: " + bestSolutionAsString);
-
+//            System.out.println("A better solution is found");
         }
-
     }
 
     /**
@@ -156,7 +153,7 @@ public class AcoProblemSolver<C, E extends Environment> {
      *
      * @param daemonActionType Daemon action type.
      */
-    private void applyDaemonActions(DaemonActionType daemonActionType) {
+    protected void applyDaemonActions(DaemonActionType daemonActionType) {
         for (DaemonAction<C, E> daemonAction : daemonActions) {
             if (daemonActionType.equals(daemonAction.getAcoPhase())) {
                 daemonAction.applyDaemonAction(this.getConfigurationProvider());
